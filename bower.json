@@ -1,12 +1,23 @@
 {
   "name": "callsmap",
   "version": "0.0.1",
-  "authors": [ "doublefint", "jenili" ],
-  "description": "calls map for intersystems cache db",
+  "homepage": "https://github.com/doublefint/callsmap",
+  "authors": [
+    "doublefint <doublefint@gmail.com>"
+  ],
+  "description": "callsmap for cache",
+  "main": "callsmap",
+  "keywords": [
+    "callsmap"
+  ],
   "license": "MIT",
   "ignore": [
     "**/.*",
+    "node_modules",
+    "bower_components",
     "vendor",
+    "test",
+    "tests"
   ],
   "dependencies": {
     "vivagraphjs": "~0.8.1"
