@@ -148,7 +148,7 @@ Method methods()
 	#define METHODS(%class, %meth) $$$META(%class,$$$cCLASSmethod,%meth)
 		
 	s method="" for { s method=$o($$$METHODS(class, method)) Quit:method="" 
-	  	w !, class,":",method
+	  	#;w !, class,":",method
 	  	s ..method = method
 	  	d ..codes()
 	
