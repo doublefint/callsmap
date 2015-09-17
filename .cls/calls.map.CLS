@@ -93,7 +93,7 @@ Select Distinct nameTo as name From calls.map)
 
 ClassMethod groupName(name = "") As %String [ CodeMode = expression, SqlProc ]
 {
-$p(name,".")
+$p($p(name,":"),".")
 }
 
 /// , calls.map_distance(class,classcall)
