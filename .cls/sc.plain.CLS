@@ -201,7 +201,8 @@ ClassMethod importAll()
 	s masks = "*." _ $lts( masks, ";*." )
 	s rs = ##class(%File).FileSetFunc(..directory(), masks )
 	while rs.%Next(){
-		s sc = ..import(rs.Name) d:'sc ..w($system.Status.GetOneErrorText(sc))
+		s file = rs.Name		
+		s sc = ..import( file ) d:'sc ..w($system.Status.GetOneErrorText(sc))
 	}
 }
 

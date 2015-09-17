@@ -17,6 +17,12 @@ ClassMethod OnPage(ByRef data) As %Status [ ServerOnly = 1 ]
 		m data = %request.Data	
 	}
 	
+	if $d(data("namespaces")) Q ..namespaces()
+	if $d(data("namespace")){
+		s namespace = $g(data("namespace",1))
+		d ..Init(namespace)	
+	}
+	
 	s jp = ##class(%ZEN.Auxiliary.altJSONSQLProvider).%New()
 	
 	s jp.sql = "Select * From calls.point"
@@ -32,6 +38,18 @@ ClassMethod OnPage(ByRef data) As %Status [ ServerOnly = 1 ]
 	
 	s sc = jp.%DrawJSON()
 	Quit $$$OK
+}
+
+ClassMethod namespaces() As %Status
+{
+	s rs =##class(%SYS.Namespace).ListFunc()
+	w "[" s first = 1
+	while rs.%Next(){
+		w:'first "," s:first first=0	
+		w """",$zcvt(rs.Nsp,"O","JSON"),""""
+	}
+	w "]"
+	Q 1
 }
 
 Property class [ SqlColumnNumber = 3 ];
@@ -81,10 +99,10 @@ From calls.map
 Group By nameTo, nameFrom
 }
 
-ClassMethod Init()
+ClassMethod Init(namespace = {$namespace})
 {
 	s map = ..%New()
-	d map.classes()
+	d map.classes(namespace)
 }
 
 /// Список классов
