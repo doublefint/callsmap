@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, user-scalable=no">
+        <title>CallsMap</title>
+        <link rel="stylesheet" href="css/style.css"> 
+        
+    	<script src="vendor/vivagraphjs/dist/vivagraph.min.js"></script>
+        <script src="js/callsmap.js"></script>
+       	<script type='text/javascript'> 
+       		window.onload = function(){new VG();}
+       </script>
+    </head>
+    <body style='width:100%; height: 100%; position : absolute'>
+		<div>
+			<select id="namespaces" class="icon select">
+                    <option value="Loading..." selected>Loading...</option>
+                </select>
+         </div>
+        
+        <div style='width:100%; height:100%; position:absolute;'>
+            <div id='graph1' ></div>
+        </div>
+    </body>
+</html>
