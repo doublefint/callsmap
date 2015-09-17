@@ -11,14 +11,25 @@ Parameter CHARSET;
 
 /// Event handler for <b>PAGE</b> event: this is invoked in order to  
 /// generate the content of a csp page.
-ClassMethod OnPage() As %Status [ ServerOnly = 1 ]
+ClassMethod OnPage(ByRef data) As %Status [ ServerOnly = 1 ]
 {
-		
+	if $d(%request){
+		m data = %request.Data	
+	}
+	
 	s jp = ##class(%ZEN.Auxiliary.altJSONSQLProvider).%New()
+	
 	s jp.sql = "Select * From calls.point"
+	s jp.arrayName = "nodes"
+	
+	if $d(data("links")) {
+		s jp.sql = "Select * From calls.link"
+		s jp.arrayName = "links"
+	}
+	
 	s jp.%Format = "twu"
 	s jp.maxRows = 10000
-	s jp.arrayName = "nodes"
+	
 	s sc = jp.%DrawJSON()
 	Quit $$$OK
 }
@@ -70,7 +81,7 @@ From calls.map
 Group By nameTo, nameFrom
 }
 
-ClassMethod Test()
+ClassMethod Init()
 {
 	s map = ..%New()
 	d map.classes()
