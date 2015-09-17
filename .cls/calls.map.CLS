@@ -85,10 +85,15 @@ $S(classFrom=classTo:.1,1:1)
 
 Query Point() As %SQLQuery [ SqlView ]
 {
-Select Distinct name From
+Select Distinct name, calls.map_groupName(name) as "group" From
 (Select Distinct nameFrom as name From calls.map
 Union All %Parallel
 Select Distinct nameTo as name From calls.map)
+}
+
+ClassMethod groupName(name = "") As %String [ CodeMode = expression, SqlProc ]
+{
+$p(name,".")
 }
 
 /// , calls.map_distance(class,classcall)
