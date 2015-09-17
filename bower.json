@@ -1,0 +1,14 @@
+{
+  "name": "callsmap",
+  "version": "0.0.1",
+  "authors": [ "doublefint", "jenili" ],
+  "description": "calls map for intersystems cache db",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "vendor",
+  ],
+  "dependencies": {
+    "vivagraphjs": "~0.8.1"
+  }
+}
