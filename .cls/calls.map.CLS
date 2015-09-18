@@ -25,14 +25,8 @@ ClassMethod OnPage(ByRef data) As %Status [ ServerOnly = 1 ]
 	
 	s jp = ##class(%ZEN.Auxiliary.altJSONSQLProvider).%New()
 	
-	s jp.sql = "Select * From calls.point"
-	s jp.arrayName = "nodes"
-	
-	if $d(data("links")) {
-		s jp.sql = "Select * From calls.link"
-		s jp.arrayName = "links"
-	}
-	
+	s jp.sql = "Select * From calls.link"
+	s jp.arrayName = "links"
 	s jp.%Format = "twu"
 	s jp.maxRows = 10000
 	
@@ -99,9 +93,10 @@ $p($p(name,":"),".")
 /// , calls.map_distance(class,classcall)
 Query Link() As %SQLQuery [ SqlView ]
 {
-Select nameFrom, nameTo, Count(1) as width, calls.map_distance(class,classcall) as distance
+Select nameFrom as a, nameTo as b 
+--, count(1) as radius, calls.map_distance(class,classcall) as distance
 From calls.map 
-Group By nameTo, nameFrom
+--Group By nameTo, nameFrom
 }
 
 ClassMethod Init(namespace = {$namespace})

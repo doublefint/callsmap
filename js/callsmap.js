@@ -1,83 +1,99 @@
+( function( window ){
+'use strict';
 
-function VG(){
+function CM(){
 	
 	this.graph = null;
 	this.idealLength = 90;	//расстояние между узлами
 	this.elements = {
-		namespaces: document.getElementById("namespaces")
-	}	
-	this.NAMESPACE = "USER";
+		namespaces: document.getElementById('namespaces')
+	};
 
-	///value - ширина линии
-	this.data ={"nodes":[],"links":[]};
+	this.NAMESPACE = '';
 
-	this.colors = [
-                        /*"#1f77b4", "#aec7e8",
-                        "#ff7f0e", "#ffbb78",*/
-    ];
-    this.groups = {};
+	this.data ={'nodes':[],'links':[]};
+
+	this.groups = {};
 	this.init();
+
 }
 
-VG.prototype.init = function(){
-	var vg = this;
+CM.prototype.init = function(){
+
+	var cm = this;
  	// смена области
- 	vg.elements.namespaces.addEventListener("change", function (e) {
+ 	cm.elements.namespaces.addEventListener('change', function onChangeNamespace(e) {
         var el = e.target || e.srcElement,
             ns = el.options[el.selectedIndex].value
         ;
-        if (ns !== vg.NAMESPACE) {
-            vg.setNamespace(ns);
+        if (ns !== cm.NAMESPACE) {
+            cm.setNamespace(ns);
         }
     });	
     ///создание графа
-    vg.createGraph(); 	
+	cm.createGraph();
 	///загрузка областей
-	vg.LoadNamespase();
+	cm.loadNamespace();
 };
 
-VG.prototype.createGraph = function(){
- 
-  var vg = this;	
-  var graph = Viva.Graph.graph();    
-  graph.Name = "CallsMap";
-    
-  vg.graph = graph;
-  
+CM.prototype.createGraph = function(){
 
+	var cm = this, graph = Viva.Graph.graph();
+	graph.Name = 'CallsMap';
+	cm.graph = graph;
+	var options = {
+
+		springLength : 10,	//длина линии
+		springCoeff : 1e-4,	//?
+		dragCoeff : 0.05,	//?
+		gravity : -10 ,	//?
+		theta: 0.5
+
+	};
+
+	var options2 = {
+		pringLength: 80,
+        springCoeff: 1e-4,
+        dragCoeff: 0.05,
+        gravity: -3,
+        theta: 0.5
+	};
+
+	var layout = Viva.Graph.Layout.forceDirected( graph, options2 );
+
+	var svgGraphics = Viva.Graph.View.svgGraphics();
 	
-  var layout = Viva.Graph.Layout.forceDirected(graph, {
-        springLength : vg.idealLength,	//длина линии
-        springCoeff : 0.00055,	//?
-        dragCoeff : 0.09,	//?
-        gravity : -1 ,	//?
-		/*springTransform: function (link, spring) {
-             spring.length = vg.idealLength *link.data.distance;
-		}*/
-   });
+	svgGraphics
+		.node( function( node ){
+			
+			
+			//var groupId = node.data.group;
+			//var color = cm.groups[ groupId ];
+			var circle = Viva.Graph.svg('circle');
+			if (!circle) return;
 
-  var svgGraphics = Viva.Graph.View.svgGraphics();
-	
-	svgGraphics.node(function(node){
-        var groupId = node.data.group , color = vg.groups[groupId];
-        var circle = Viva.Graph.svg('circle')
-            .attr('r', 7)
-            .attr('stroke', '#fff')
-            .attr('stroke-width', '1px')
-            .attr("fill", color);
+			circle.attr('r', 10 )
+				.attr('stroke', '#fff')
+				.attr('stroke-width', '1px')
+				.attr('fill', '#ccc')
+			;
 
-        circle.append('title').text(node.data.name);
+			circle.append('title').text( node.id );
 
-        return circle;
+			return circle;
 
-	}).placeNode(function(nodeUI, pos){
-        nodeUI.attr( "cx", pos.x).attr("cy", pos.y);
-	});
+		})
+		.placeNode( function( nodeUI, pos ){
+			nodeUI.attr('cx', pos.x).attr('cy', pos.y );
+		}
+	);
 
-	svgGraphics.link(function(link){
-    return Viva.Graph.svg('line')
-            .attr('stroke', '#999')
-            .attr('stroke-width', Math.sqrt(link.data));
+	svgGraphics.link( function( link ){
+
+		return Viva.Graph.svg('line').attr('stroke', '#999')
+			//.attr('stroke-width', Math.sqrt(link.data))
+		;
+
 	});
 
     var renderer = Viva.Graph.View.renderer(graph, {
@@ -88,133 +104,96 @@ VG.prototype.createGraph = function(){
         renderLinks : true
     });
 
-    renderer.run(500); 
-    vg.renderer = renderer;  
+    renderer.run( 1000 ); 
+    cm.renderer = renderer;  
 
-	//vg.Update();
-}
+	//cm.update();
+};
 
-VG.prototype.LoadNamespase = function(){
-	var vg = this, currentNamespace= vg.NAMESPACE ;
-	
-	vg.load("calls.map.cls?namespaces", null, function(err , namespaces){
-        vg.elements.namespaces.textContent = "";	
-			
-		for (var i in namespaces || []) {
-				var ns = namespaces[i];
-		        e = document.createElement("option");
-		        
-		        e.setAttribute("value", ns);
-		        e.textContent = ns;
-		        if (ns === currentNamespace) e.setAttribute("selected", "");
-		        vg.elements.namespaces.appendChild(e);
-    	}
-    	
-    	vg.setNamespace( vg.elements.namespaces.value );
+
+CM.prototype.loadNamespace = function(){
+	var cm = this, currentNamespace= cm.NAMESPACE ;
+	cm.load('calls.map.cls?namespaces', null, function onLoadNamespace (err , namespaces ){
+		if (err) { console.log(err); return; }
+		cm.elements.namespaces.textContent = '';
+		namespaces = namespaces || [];
+		var i, ns, e, length = namespaces.length ;
+		for ( i=0; i < length; i++ ) {
+			ns = namespaces[i];
+			e = document.createElement('option');
+			e.setAttribute('value', ns);
+			e.textContent = ns;
+			if ( ns === currentNamespace ) e.setAttribute('selected', '');
+			cm.elements.namespaces.appendChild(e);
+		}
+		cm.setNamespace( cm.elements.namespaces.value );
 	});
-}
-VG.prototype.setNamespace = function (namespace) {
+};
 
-    var vg = this , graph = vg.graph;
-    vg.NAMESPACE = namespace;   
-    
-    ///очистка графа  
-    graph.clear();      
+CM.prototype.setNamespace = function (namespace) {
 
-    
-    ///загрузка новых 
-	vg.LoadData();
-	
-	
+	var cm = this , graph = cm.graph;
+	cm.NAMESPACE = namespace;
+	graph.clear();
+	cm.loadData();
+
 };
 
 ///загрузка точек
-VG.prototype.LoadData = function(){
-	var vg = this;
-	var namespace = "USER";	//vg.NAMESPACE;
-	var url = "calls.map.cls?namespace=" + vg.NAMESPACE;
-	vg.load(url,"",function(err,result){vg.onLoadData(result)})
-}
+CM.prototype.loadData = function(){
 
-///загрузка связей
-VG.prototype.LoadLinks = function(){
-	var vg = this;
-	var url = "calls.map.cls?links"
-	vg.load(url,"",function(err,result){vg.onLoadLinks(result)})
+	var cm = this, url = 'calls.map.cls?namespace=' + cm.NAMESPACE;
+	var	graph = cm.graph;
 
-}
+	cm.load(url,'', function onLoadData(err,result){ 
 
+		cm.data.links = result.links;
 
-VG.prototype.onLoadData= function(result){
-	var vg = this, nodes = result.nodes;
-	
-	vg.data.nodes = nodes ;
-	var groups = vg.groups;
-	var len =  nodes.length;
-	while ( len--){
-		groups[nodes[len].group] = vg.color();
-	};
+		graph.beginUpdate();
 
-	vg.LoadLinks(); 
-}
+		var link, data = cm.data, len = data.links.length ;
 
-VG.prototype.onLoadLinks= function(result){
-	
-	var vg = this;	
-	vg.data.links = result.links;	
-	vg.Update(); 
-	
-}
+		while (len--) {
+			link = data.links[len];
+			graph.addLink( link.a, link.b );
+		}
 
+		graph.endUpdate();
 
-///обновление графа
-VG.prototype.Update = function(){
-	
-	var vg = this,graph = vg.graph;
-
-    graph.beginUpdate();
-
-	var data = vg.data ;
-	
-	for (var i = 0; i < data.nodes.length; ++i){
-		var nm = data.nodes[i].name;
-		graph.addNode( nm , data.nodes[i]);
-	};
-	
-	for (i = 0; i < data.links.length; ++i){
- 		var link = data.links[i];
-		graph.addLink(link.nameFrom, link.nameTo, link.width);
-    }; 
-     
-    graph.endUpdate();
-   
-};
-
-///метод загрузки данных
-VG.prototype.load = function (url, data, callback) {
-
-    var xhr = new XMLHttpRequest();
-
-    xhr.open(data ? "POST" : "GET", url);
-
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            return callback(null, JSON.parse(xhr.responseText) || {});
-        } else if (xhr.readyState === 4) {
-            callback(xhr.responseText + ", " + xhr.status + ": " + xhr.statusText);
-        }
-    };
-
-    xhr.send(data ? JSON.stringify(data) : undefined);
+	});
 
 };
 
 ///генерация цвета
-VG.prototype.color = function(){
-	
+CM.prototype.color = function(){
+
     var r=Math.floor(Math.random() * (256));
     var g=Math.floor(Math.random() * (256));
     var b=Math.floor(Math.random() * (256));
     var color='#' + r.toString(16) + g.toString(16) + b.toString(16);
-  	return color
- }
+    return color;
+
+ };
+
+///метод загрузки данных
+CM.prototype.load = function (url, data, callback) {
+
+	var xhr = new XMLHttpRequest();
+
+	xhr.open(data ? 'POST' : 'GET', url);
+
+	xhr.onreadystatechange = function () {
+		if (xhr.readyState === 4 && xhr.status === 200) {
+			return callback(null, JSON.parse(xhr.responseText) || {});
+		} else if (xhr.readyState === 4) {
+			callback(xhr.responseText + ', ' + xhr.status + ': ' + xhr.statusText);
+		}
+	};
+
+	xhr.send(data ? JSON.stringify(data) : undefined);
+
+};
+
+	window.onload = function(){ new CM(); };
+
+})( window );
