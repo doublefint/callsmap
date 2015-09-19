@@ -41,25 +41,17 @@ CM.prototype.createGraph = function(){
 	var cm = this, graph = Viva.Graph.graph();
 	graph.Name = 'CallsMap';
 	cm.graph = graph;
+
+
 	var options = {
-
-		springLength : 10,	//длина линии
-		springCoeff : 1e-4,	//?
-		dragCoeff : 0.05,	//?
-		gravity : -10 ,	//?
-		theta: 0.5
-
-	};
-
-	var options2 = {
-		pringLength: 80,
+		springLength: 80,
         springCoeff: 1e-4,
         dragCoeff: 0.05,
         gravity: -3,
         theta: 0.5
 	};
 
-	var layout = Viva.Graph.Layout.forceDirected( graph, options2 );
+	var layout = Viva.Graph.Layout.forceDirected( graph, options );
 
 	var svgGraphics = Viva.Graph.View.svgGraphics();
 	
