@@ -1,2 +1,3 @@
 # callsmap
-calls map for InterSystems Cache database
+calls map for InterSystems Caché database
+![example](img/calls.map.png)
