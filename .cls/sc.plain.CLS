@@ -6,8 +6,11 @@
 /// <li>Create in Studio empty class sc.plain and copy-past this code. Compile class </li>
 /// <li>Set working directory for current namespace - d ##class(sc.plain).directory("c:\mysource\") </li>
 /// <li>Backup your sources  </li>
-/// <li>Export all sources - d ##class(sc.plain).exportAll</li>
-/// <li>Setup class sc.plain as source control class in System Managment Portal </li>
+/// <li>Export all sources - d ##class(sc.plain).exportAll()</li>
+/// <li>Setup class sc.plain as source control class in System Managment Portal or via terminal <code>
+///  w ##class(%Studio.SourceControl.Interface).SourceControlClassSet("sc.plain", $zu(5))
+///</code>
+/// </li>
 /// <li>Reopen Studio</li>
 /// </ol>
 /// You can import all previously exported sources from your working directory- d ##class(sc.plain).importAll()
