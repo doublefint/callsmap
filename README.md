@@ -1,3 +1,3 @@
 # callsmap
 calls map for InterSystems Caché database
-![example](img/calls.map.png)
+![example](https://github.com/doublefint/callsmap/raw/master/img/calls.map.png)
